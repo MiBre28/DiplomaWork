@@ -6,7 +6,7 @@ import re
 import datetime as dt
 import openpyxl
 
-con = fdb.connect(dsn='C:/bazy/test.fdb', user='SYSDBA', password='masterkey')
+con = fdb.connect(dsn='C:/bazy/test.fdb', user='***', password='***')
 #polaczenie z baza danych
 
 # Funkcja do sprawdzenia poprawności formatu daty
@@ -58,9 +58,6 @@ normy = pd.DataFrame(normy)
 zlecenia = pd.DataFrame(zlecenia)
 #tworzenie plikow dataframe
 
-#normy.to_excel("C:/Users/breczko/Desktop/MB/normy.xlsx", sheet_name='normy')
-#zlecenia.to_excel("C:/Users/breczko/Desktop/MB/zlecenia.xlsx", sheet_name='zamowienia')
-#zapis pikow
 
 normy[0] = normy[0].str.replace(' ', '')
 zlecenia[1] = zlecenia[1].str.replace(' ', '')
@@ -78,8 +75,6 @@ filtered_df = zlecenia[~zlecenia[1].str.startswith('SERW')]
 #pomijamy pliki SERW
 
 
-#pd.set_option('display.max_columns', None)
-#pokazywanie wszystkich kolumn
 grouped = filtered_df.groupby(1)
 #grupujemy dane
 results = []
@@ -233,8 +228,6 @@ def assign_tasks_to_machine(machine_data, tasks, machine_type):
         return tasks_t
     # # Jeśli przypisujesz zadania do maszyn typu topspin i nie ma już zadań w tasks_t,
     # zacznij brać zadania z tasks_k
-    # elif machine_type == 't' and tasks.empty:
-    #     return tasks_k
 
     return tasks
 
@@ -242,8 +235,6 @@ def assign_tasks_to_machine(machine_data, tasks, machine_type):
 tasks_t = results_df[results_df['SumaWarstw'] == 1].copy()
 tasks_k = results_df[results_df['SumaWarstw'] > 1].sort_values(by='SumaWarstw', ascending=False).copy()
 
-# print(f"Liczba zadań w tasks_k po przydzieleniu dla maszyn typu cutter: {len(tasks_k)}")
-# print(f"Liczba zadań w tasks_t po przydzieleniu dla maszyn typu topspin: {len(tasks_t)}")
 
 # Przydzielanie dla maszyn typu topspin (tylko z sumawarstw = 1)
 for machine in machines_data_t:
@@ -257,9 +248,6 @@ if tasks_t.empty:
     tasks_k = tasks_k.sort_values(by='SumaWarstw')
     for machine in machines_data_t:
         tasks_k = assign_tasks_to_machine(machine, tasks_k, 'Topspin')
-
-# print(f"Liczba zadań w tasks_k po przydzieleniu dla maszyn typu cutter: {len(tasks_k)}")
-# print(f"Liczba zadań w tasks_t po przydzieleniu dla maszyn typu topspin: {len(tasks_t)}")
 
 # Zapisywanie do plików Excel
 with pd.ExcelWriter("C:/Users/breczko/Desktop/MB/raport.xlsx") as writer:
@@ -291,25 +279,9 @@ with pd.ExcelWriter("C:/Users/breczko/Desktop/MB/raport.xlsx") as writer:
 
     # Zapis nieprzypisanych zleceń
     unassigned_tasks = pd.concat([tasks_k, tasks_t])
-    # print(f"Liczba nieprzypisanych zadań przed zapisaniem do Excela: {len(unassigned_tasks)}")
     if not unassigned_tasks.empty:
         unassigned_tasks[['KodModelu', 'SumaWarstw', 'Details', 'MetryTkaniny']].to_excel\
             (writer, sheet_name="Nieprzypisane_zlecenia", index=False)
 
 print('Gratulacje! Pliki znajdziesz tutaj: C:/Users/breczko/Desktop/MB/raport.xlsx')
 
-# normy.to_excel("C:/Users/breczko/Desktop/MB/normy1.xlsx", sheet_name='normy')
-# zlecenia.to_excel("C:/Users/breczko/Desktop/MB/zlecenia1.xlsx", sheet_name='zamowienia')
-# results_df.to_excel("C:/Users/breczko/Desktop/MB/testresults.xlsx", sheet_name='wyniki', engine='openpyxl')
-
-# # Ustawienie opcji, aby wyświetlić wszystkie wiersze
-# pd.set_option('display.max_rows', None)
-#
-# # Ustawienie opcji, aby wyświetlić wszystkie kolumny
-# pd.set_option('display.max_columns', None)
-#
-# # Ustawienie opcji, aby wyświetlić pełną zawartość komórki
-# pd.set_option('display.width', None)
-# pd.set_option('display.max_colwidth', None)
-#
-# print(results_df)
