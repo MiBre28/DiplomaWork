@@ -1,6 +1,6 @@
 FIRST GOAL:
 The aim of this work was to develop a Python program supported by SQL scripts.The program is designed to download
-orders from a specific database, then group and sort them according to established criteria.The key function is 
+orders from a specific database, then group and sort them according to established criteria. The key function is 
 the implementation of a greedy algorithm that intelligently assigns orders to available machines.
 
 DEVELOPMENT:
